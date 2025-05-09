@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Payload Input Form</title>
+    <style>
+        body {
+            background-color: #f0f4f8;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 40px;
+            color: #333;
+        }
+
+        h2 {
+            color: #2c3e50;
+            text-align: center;
+        }
+
+        form {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px 40px;
+        }
+
+        input, textarea, select {
+            padding: 10px;
+            font-size: 14px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            width: 100%;
+            background-color: #f9f9f9;
+            transition: border-color 0.2s;
+        }
+
+        input:focus, textarea:focus, select:focus {
+            border-color: #2980b9;
+            outline: none;
+            background-color: #fff;
+        }
+
+        fieldset {
+            margin-top: 30px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #ecf3f9;
+        }
+
+        legend {
+            font-weight: bold;
+            font-size: 16px;
+            color: #2980b9;
+        }
+
+        textarea {
+            resize: vertical;
+        }
+
+        .full-width {
+            grid-column: span 2;
+        }
+
+        label {
+            font-weight: 500;
+            color: #555;
+        }
+
+        button {
+            display: block;
+            margin: 30px auto 0;
+            padding: 12px 30px;
+            background-color: #3498db;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+    </style>
+</head>
+<body>
+<h2>Spring Boot Project Generator</h2>
+
+<form th:action="@{/api/v1/submit}" th:object="${project}" method="post">
+    <fieldset>
+        <legend>Project Info</legend>
+        <div class="form-grid">
+            <input type="text" th:field="*{projectName}" placeholder="Project Name" required />
+            <input type="text" th:field="*{groupId}" placeholder="Group ID" required />
+            <input type="text" th:field="*{artifactId}" placeholder="Artifact ID" required />
+            <input type="text" th:field="*{description}" placeholder="Description" class="full-width" />
+            <input type="hidden" th:field="*{version}" value="1.0.0" />
+            <input type="hidden" th:field="*{javaVersion}" value="17" />
+        </div>
+    </fieldset>
+
+    <fieldset th:each="req, stat : *{requests}">
+        <legend>Request</legend>
+        <div class="form-grid">
+            <!--            <input type="text" th:field="*{requests[__${stat.index}__].type}" placeholder="Type" />-->
+
+            <div>
+                <label>Payload Type</label><br/>
+                <select th:field="*{requests[__${stat.index}__].type}">
+                    <option value="JSON">JSON</option>
+                    <option value="XML">XML</option>
+                </select>
+            </div>
+
+            <div>
+                <label>HTTP Method</label><br/>
+                <select th:field="*{requests[__${stat.index}__].httpMethod}">
+                    <option value="POST">POST</option>
+                    <option value="GET">GET</option>
+                    <option value="PUT">PUT</option>
+                    <option value="DELETE">DELETE</option>
+                </select>
+            </div>
+
+            <input type="text" th:field="*{requests[__${stat.index}__].path}" placeholder="Path" />
+
+
+        </div>
+
+        <div style="margin-top: 20px;">
+            <label>HTTP Request Payload</label><br/>
+            <textarea th:field="*{requests[__${stat.index}__].httpRequest}" rows="4"></textarea><br/><br/>
+
+            <label>HTTP Response Payload</label><br/>
+            <textarea th:field="*{requests[__${stat.index}__].httpResponse}" rows="6"></textarea>
+        </div>
+    </fieldset>
+
+    <button type="submit">Submit</button>
+</form>
+<footer style="text-align: center; margin-top: 40px; color: #888; font-size: 14px;">
+    &copy; 2025 NPST. All rights reserved.
+</footer>
+<!-- JavaScript to reset form after submit -->
+<script>
+    document.querySelector("form").addEventListener("submit", function(event) {
+        // Give a small delay to allow file download to trigger
+        setTimeout(() => {
+            this.reset();
+        }, 1000);
+    });
+</script>
+</body>
+</html>
